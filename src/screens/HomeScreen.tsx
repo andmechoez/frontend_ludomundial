@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, StatusBar, TouchableOpacity } from 'react-native';
 import { MatchCard } from '../components/MatchCard';
 import { BettingMarkets, oddSelection } from '../components/BettingMarkets';
 import { BetSlip } from '../components/BetSlip';
 import { colors } from '../theme/colors';
 
-export const HomeScreen: React.FC = () => {
+interface HomeScreenProps {
+  onLogout?: () => void;
+}
+
+export const HomeScreen: React.FC<HomeScreenProps> = ({ onLogout }) => {
   const [selectedOdd, setSelectedOdd] = useState<oddSelection | null>(null);
 
   // Mapeo inicial (Mock simulando un stream local/Supabase listener futuro)
@@ -25,6 +29,18 @@ export const HomeScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.topBar}>
+          <View>
+            <Text style={styles.brand}>LUDOMUNDIAL</Text>
+            <Text style={styles.subtitle}>Mercados en vivo</Text>
+          </View>
+          {onLogout && (
+            <TouchableOpacity style={styles.logoutBtn} onPress={onLogout} activeOpacity={0.8}>
+              <Text style={styles.logoutText}>Salir</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
         <MatchCard
           homeTeam={activeMatch.homeTeam}
           awayTeam={activeMatch.awayTeam}
@@ -59,5 +75,40 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingTop: 10,
     paddingBottom: 24,
-  }
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginBottom: 6,
+  },
+  brand: {
+    color: colors.text,
+    fontSize: 18,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+  },
+  subtitle: {
+    color: colors.textMuted,
+    fontSize: 12,
+    marginTop: 4,
+  },
+  logoutBtn: {
+    minHeight: 44,
+    minWidth: 72,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoutText: {
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
 });
